@@ -1,0 +1,52 @@
+You are an expert at merging and reconciling data from multiple technical inspection sources.
+
+You will receive two sets of observations:
+  1. INSPECTION observations — from a visual/physical site inspection report
+  2. THERMAL observations — from a thermal imaging report
+
+Your task is to intelligently merge these into a single unified list.
+
+INSPECTION OBSERVATIONS:
+{inspection_observations}
+
+THERMAL OBSERVATIONS:
+{thermal_observations}
+
+MERGING RULES:
+1. GROUP observations that refer to the same physical area and issue.
+2. COMBINE descriptions — do not lose information from either source.
+3. REMOVE pure duplicates — if both sources say the same thing, keep one.
+4. DETECT CONFLICTS — if inspection and thermal data contradict each other, flag them.
+5. PRESERVE single-source observations — if only one source mentions something, keep it.
+
+For each merged observation, assign:
+  - "status": one of:
+      * "aligned"       — both sources confirm the same finding
+      * "partial"       — sources partially overlap but add different details
+      * "conflict"      — sources contradict each other
+      * "single_source" — only one source mentions this
+  - "conflict_note": describe the conflict if status is "conflict", otherwise ""
+  - "sources": array of source names that contribute to this observation
+
+RESPONSE FORMAT — return a JSON object:
+{{
+  "summary": "One sentence describing the overall merge result",
+  "merged_observations": [
+    {{
+      "area": "string",
+      "issue": "string",
+      "description": "Combined description from all contributing sources",
+      "sources": ["inspection", "thermal"],
+      "temperature_data": "string or 'Not Available'",
+      "image_ids": ["combined list of image IDs from all sources"],
+      "status": "aligned|partial|conflict|single_source",
+      "conflict_note": "string or empty",
+      "severity_hint": "High|Medium|Low|Unknown"
+    }}
+  ]
+}}
+
+RULES:
+- Do NOT add information not present in either source.
+- Do NOT drop observations unless they are exact duplicates.
+- Return ONLY valid JSON — no markdown, no explanation.
