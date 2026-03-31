@@ -167,9 +167,6 @@ def _merge_group(group):
     }
 
 
-# -------------------------------
-# 🔹 CONFLICT LOGIC (IMPORTANT)
-# -------------------------------
 
 def _detect_conflict(insp, therm):
     insp_text = insp["description"].lower()
@@ -183,10 +180,6 @@ def _detect_conflict(insp, therm):
 
     return ""
 
-
-# -------------------------------
-# 🔹 TEXT COMBINATION
-# -------------------------------
 
 def _combine_text(insp, therm):
     return f"{insp['description']} | Thermal: {therm['description']}"

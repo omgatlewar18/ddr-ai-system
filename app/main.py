@@ -1,6 +1,3 @@
-"""
-main.py — FINAL PRODUCTION PIPELINE
-"""
 
 import argparse
 import logging
@@ -22,11 +19,6 @@ from app.config import OUTPUTS_DIR
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-# -------------------------------
-# 🔹 PIPELINE
-# -------------------------------
 
 
 
@@ -90,19 +82,13 @@ def run_pipeline(inspection_pdf, thermal_pdf, property_name, report_date):
     return output
 
 
-# -------------------------------
-# 🔹 SAVE HELPERS
-# -------------------------------
+
 
 def _save_json(name, data):
     path = OUTPUTS_DIR / name
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
 
-
-# -------------------------------
-# 🔹 CLI
-# -------------------------------
 
 def main():
     import sys
