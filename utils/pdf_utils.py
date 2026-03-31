@@ -28,8 +28,8 @@ def extract_images_from_pdf(
     pages = extract_text_by_page(doc, source_name)
     return map_images_to_context(pages, images)
 
-    
-def extract_text_by_page(doc, source_name):
+
+def extract_text_by_page(doc, source_name=None):
     pages = []
 
     for page_num in range(doc.page_count):
@@ -39,7 +39,7 @@ def extract_text_by_page(doc, source_name):
         pages.append({
             "page": page_num + 1,
             "text": text.strip(),
-            "source": source_name
+            "source": source_name if source_name else "unknown"
         })
 
     return pages
