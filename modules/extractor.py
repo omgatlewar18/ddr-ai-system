@@ -83,10 +83,6 @@ def extract_from_pdf(pdf_path, source):
     )
 
 
-# -------------------------------
-# 🔹 PAGE-LEVEL EXTRACTION
-# -------------------------------
-
 def extract_observations_per_page(pages, images, source, prompt_template, errors):
     all_obs = []
 
