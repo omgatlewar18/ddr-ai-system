@@ -13,16 +13,30 @@ from modules.llm_client import call_llm
 logger = logging.getLogger(__name__)
 
 
+# -------------------------------
+# 🔹 DATA MODEL
+# -------------------------------
+
 @dataclass
 class ExtractionResult:
     source: str
     observations: list[dict]
     images: list[dict]
+    raw_text: str                      # 🔥 ADDED
     errors: list[str] = field(default_factory=list)
 
 
+# -------------------------------
+# 🔹 PROMPT LOADER (SAFE)
+# -------------------------------
+
 def load_prompt(name):
     path = PROMPTS_DIR / f"{name}.txt"
+
+    if not path.exists():
+        logger.warning(f"Prompt file missing: {name}.txt — using fallback")
+        return "Extract structured observations from the document."
+
     return path.read_text(encoding="utf-8")
 
 
@@ -38,7 +52,11 @@ def extract_from_pdf(pdf_path, source):
 
     doc = open_pdf(pdf_path)
 
-    pages = extract_text_by_page(doc)
+    # 🔥 FIX: pass source_name
+    pages = extract_text_by_page(doc, source)
+
+    # 🔥 BUILD RAW TEXT (IMPORTANT)
+    raw_text = "\n".join(p["text"] for p in pages if p.get("text"))
 
     images = extract_images_from_pdf(
         doc,
@@ -60,6 +78,7 @@ def extract_from_pdf(pdf_path, source):
         source=source,
         observations=observations,
         images=images,
+        raw_text=raw_text,            # 🔥 ADDED
         errors=errors,
     )
 
@@ -99,7 +118,7 @@ def extract_observations_per_page(pages, images, source, prompt_template, errors
             for obs in parsed:
                 obs["page_ref"] = page_num
 
-                # fallback: assign first image if none provided
+                # fallback image assignment
                 if not obs.get("image_ids"):
                     if page_images:
                         obs["image_ids"] = [page_images[0]["image_id"]]
